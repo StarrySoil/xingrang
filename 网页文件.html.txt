@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星壤 | 宇宙文明图谱</title>
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --bg-dark: #0a0e27;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: #e0e6ed;
+            overflow-x: hidden;
+        }
+
+        /* 星空背景 */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><rect width="100%" height="100%" fill="%230a0e27"/><g fill="%23ffffff"><circle cx="10%" cy="20%" r="1"/><circle cx="25%" cy="35%" r="0.8"/><circle cx="40%" cy="15%" r="1.2"/><circle cx="60%" cy="40%" r="0.9"/><circle cx="75%" cy="25%" r="1"/><circle cx="90%" cy="30%" r="0.7"/></g></svg>') repeat;
+            animation: twinkle 8s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+
+        /* 导航栏 */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background: rgba(10, 14, 39, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #e0e6ed;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* 英雄区 */
+        .hero {
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 5%;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--primary), #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .cta-button {
+            padding: 1rem 2.5rem;
+            background: linear-gradient(90deg, var(--primary), #0099ff);
+            color: var(--bg-dark);
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        /* 内容区 */
+        .content {
+            padding: 5rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            color: var(--primary);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #a0aec0;
+            margin-bottom: 2rem;
+        }
+
+        /* 筛选栏 */
+        .filter-bar {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 0.6rem 1.2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: #e0e6ed;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
+            border-color: var(--primary);
+        }
+
+        /* 卡片网格 */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .card .tag {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--primary);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            line-height: 1.6;
+            color: #a0aec0;
+        }
+
+        /* 复合文明演化 */
+        .evolution-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .evolution-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            padding: 2rem;
+        }
+
+        .evolution-card h4 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        /* 计算机范式表格 */
+        .computer-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+        }
+
+        .computer-table th, .computer-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .computer-table th {
+            color: var(--primary);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .computer-table tr:hover {
+            background: var(--card-bg);
+        }
+
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 14, 39, 0.9);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #1a1f3a;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: #e0e6ed;
+            font-size: 1.5rem;
+            cursor: pointer;
+            float: right;
+        }
+
+        /* 页脚 */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(10, 14, 39, 0.8);
+            border-top: 1px solid var(--card-border);
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+
+    <nav>
+        <div class="logo">星壤</div>
+        <div class="nav-links">
+            <a href="#about">关于我们</a>
+            <a href="#civilizations">文明图谱</a>
+            <a href="#composite">复合演化</a>
+            <a href="#computer">计算机范式</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <h1>星壤</h1>
+        <p>探索宇宙文明的本质，解码物质与感知的终极形态。我们是星壤，致力于构建宇宙文明的统一理论框架。</p>
+        <button class="cta-button" onclick="document.getElementById('civilizations').scrollIntoView({behavior: 'smooth'})">探索文明图谱</button>
+    </section>
+
+    <section class="content" id="about">
+        <h2 class="section-title">关于星壤</h2>
+        <div class="cards">
+            <div class="card">
+                <h3>文明研究</h3>
+                <p>我们提出了基于物理媒介与感知通道的13种基础物质文明理论，为理解宇宙文明提供了全新视角。</p>
+            </div>
+            <div class="card">
+                <h3>范式对应</h3>
+                <p>每种文明都对应着独特的计算范式，我们致力于揭示文明形态与计算能力之间的深层联系。</p>
+            </div>
+            <div class="card">
+                <h3>未来探索</h3>
+                <p>通过复合文明演化理论，我们预测并模拟了无限可能的文明形态，为人类未来的星际发展提供指引。</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="content" id="civilizations">
+        <h2 class="section-title">宇宙基础文明图谱</h2>
+        <p class="section-subtitle">基于物理媒介与感知通道的13种物质基础文明</p>
+        <div class="filter-bar">
+            <button class="filter-btn active" data-filter="all">全部</button>
+            <button class="filter-btn" data-filter="electromagnetic">电磁类</button>
+            <button class="filter-btn" data-filter="mechanical">机械类</button>
+            <button class="filter-btn" data-filter="quantum">量子类</button>
+        </div>
+        <div class="cards" id="civilization-cards"></div>
+    </section>
+
+    <section class="content" id="composite">
+        <h2 class="section-title">复合文明演化</h2>
+        <p class="section-subtitle">基础文明通过混合、编码变体、技术补偿、文化融合等方式，衍生出无限可能</p>
+        <div class="evolution-grid">
+            <div class="evolution-card">
+                <h4>人类文明（光视+声波）</h4>
+                <p>以可见光为主要信息载体，结合声波进行高效通信，发展出基于硅基芯片的数字计算机。</p>
+            </div>
+            <div class="evolution-card">
+                <h4>机械文明（机械振动+压力感知）</h4>
+                <p>通过机械结构传递信息，利用压力变化进行感知，发展出基于齿轮和杠杆的模拟计算系统。</p>
+            </div>
+            <div class="evolution-card">
+                <h4>量子文明（量子纠缠+超感知）</h4>
+                <p>利用量子纠缠实现超距通信，发展出能够突破经典物理限制的量子计算网络。</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="content" id="computer">
+        <h2 class="section-title">计算机范式对应</h2>
+        <table class="computer-table">
+            <thead>
+                <tr>
+                    <th>文明名称</th>
+                    <th>物理媒介</th>
+                    <th>计算机类型</th>
+                    <th>核心特征</th>
+                </tr>
+            </thead>
+            <tbody id="computer-table-body"></tbody>
+        </table>
+    </section>
+
+    <div class="modal" id="civilization-modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">&times;</button>
+            <h3 id="modal-title"></h3>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 星壤组织 | 探索无垠，连接未来</p>
+    </footer>
+
+    <script>
+        // 13种基础文明数据
+        const civilizations = [
+            { name: '光视文明', media: '可见光', sense: '视觉', computer: '光视计算机', category: 'electromagnetic', desc: '以可见光为主要信息载体，通过视觉感知世界，发展出基于光子的计算系统。', details: '核心优势：信息传输速度快，带宽高；劣势：易受大气干扰，对环境要求高。演化方向：与声波文明结合，形成多模态感知。' },
+            { name: '声波文明', media: '声波', sense: '听觉', computer: '声计算机', category: 'mechanical', desc: '以声波为信息载体，通过听觉感知世界，发展出基于机械振动的计算系统。', details: '核心优势：穿透能力强，可在复杂环境中传播；劣势：传输速度慢，带宽有限。演化方向：与光视文明结合，形成人类文明。' },
+            { name: '电磁文明', media: '电磁波', sense: '电磁感知', computer: '电磁计算机', category: 'electromagnetic', desc: '利用电磁波进行信息传递，发展出能够直接处理电磁信号的计算系统。', details: '核心优势：覆盖范围广，可穿透障碍物；劣势：易受电磁干扰。演化方向：与量子文明融合，发展出超距通信技术。' },
+            { name: '量子文明', media: '量子纠缠', sense: '超感知', computer: '量子计算机', category: 'quantum', desc: '基于量子纠缠原理，发展出能够突破经典物理限制的计算系统。', details: '核心优势：计算能力指数级提升，可处理复杂问题；劣势：技术门槛极高，稳定性差。演化方向：与所有基础文明兼容，成为通用计算范式。' },
+            { name: '机械文明', media: '机械振动', sense: '压力感知', computer: '机械计算机', category: 'mechanical', desc: '通过机械结构传递信息，利用压力变化进行感知，发展出基于齿轮和杠杆的模拟计算系统。', details: '核心优势：结构稳定，可靠性高；劣势：计算速度慢，体积庞大。演化方向：与电磁文明结合，形成机电一体化系统。' },
+            { name: '热感文明', media: '红外辐射', sense: '热感知', computer: '热计算机', category: 'electromagnetic', desc: '以红外辐射为信息载体，通过感知温度变化来理解世界，发展出基于热信号的计算系统。', details: '核心优势：可在黑暗环境中工作，不受光线影响；劣势：分辨率低，易受环境温度干扰。演化方向：与光视文明结合，形成夜视能力。' },
+            { name: '磁感知文明', media: '磁场', sense: '磁感知', computer: '磁计算机', category: 'electromagnetic', desc: '利用磁场变化传递信息，发展出能够直接处理磁信号的计算系统。', details: '核心优势：可穿透非磁性材料，不受电磁屏蔽影响；劣势：信号强度弱，易受地磁场干扰。演化方向：与电磁文明融合，发展出磁电混合计算。' },
+            { name: '化学文明', media: '化学反应', sense: '化学感知', computer: '化学计算机', category: 'mechanical', desc: '通过化学反应速率和产物变化来编码信息，发展出基于分子级反应的计算系统。', details: '核心优势：并行处理能力强，可模拟复杂生物过程；劣势：反应速度慢，难以实时计算。演化方向：与量子文明结合，发展出量子化学计算。' },
+            { name: '引力文明', media: '引力波', sense: '引力感知', computer: '引力计算机', category: 'quantum', desc: '利用引力波的时空涟漪传递信息，发展出能够处理引力信号的计算系统。', details: '核心优势：可穿透宇宙，不受物质阻挡；劣势：信号极其微弱，探测难度极大。演化方向：与量子文明融合，发展出时空计算。' },
+            { name: '中微子文明', media: '中微子', sense: '中微子感知', computer: '中微子计算机', category: 'quantum', desc: '以中微子为信息载体，发展出能够穿透任何物质的通信和计算系统。', details: '核心优势：几乎不与物质相互作用，可实现星际通信；劣势：探测和控制难度极高。演化方向：与引力文明结合，形成宇宙级通信网络。' },
+            { name: '等离子文明', media: '等离子体', sense: '等离子感知', computer: '等离子计算机', category: 'electromagnetic', desc: '利用等离子体中的带电粒子运动传递信息，发展出基于等离子体的计算系统。', details: '核心优势：可在高温环境中工作，适合恒星内部计算；劣势：稳定性差，难以控制。演化方向：与电磁文明融合，发展出恒星级计算。' },
+            { name: '暗物质文明', media: '暗物质', sense: '暗物质感知', computer: '暗物质计算机', category: 'quantum', desc: '基于暗物质的相互作用传递信息，发展出能够处理暗物质信号的计算系统。', details: '核心优势：不受可见物质干扰，可隐藏于宇宙暗区；劣势：完全无法被现有技术探测。演化方向：与引力文明结合，形成暗宇宙计算。' },
+            { name: '反物质文明', media: '反物质', sense: '反物质感知', computer: '反物质计算机', category: 'quantum', desc: '利用反物质与物质的湮灭反应编码信息，发展出基于反物质的计算系统。', details: '核心优势：能量密度极高，计算效率惊人；劣势：极不稳定，易与物质湮灭。演化方向：与量子文明融合，发展出反物质计算。' }
+        ];
+
+        // 动态生成文明卡片
+        function renderCivilizations(filter = 'all') {
+            const container = document.getElementById('civilization-cards');
+            container.innerHTML = '';
+            const filtered = filter === 'all' ? civilizations : civilizations.filter(c => c.category === filter);
+            filtered.forEach(civ => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <h3>${civ.name}</h3>
+                    <span class="tag">${civ.media}</span>
+                    <span class="tag">${civ.computer}</span>
+                    <p>${civ.desc}</p>
+                `;
+                card.onclick = () => openModal(civ);
+                container.appendChild(card);
+            });
+        }
+
+        // 动态生成计算机范式表格
+        function renderComputerTable() {
+            const tbody = document.getElementById('computer-table-body');
+            tbody.innerHTML = '';
+            civilizations.forEach(civ => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${civ.name}</td>
+                    <td>${civ.media}</td>
+                    <td>${civ.computer}</td>
+                    <td>${civ.details.split('；')[0]}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // 模态框功能
+        function openModal(civ) {
+            document.getElementById('modal-title').textContent = civ.name;
+            document.getElementById('modal-content').innerHTML = `
+                <p><strong>物理媒介：</strong>${civ.media}</p>
+                <p><strong>感知通道：</strong>${civ.sense}</p>
+                <p><strong>计算机范式：</strong>${civ.computer}</p>
+                <p><strong>详细描述：</strong>${civ.details}</p>
+            `;
+            document.getElementById('civilization-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('civilization-modal').style.display = 'none';
+        }
+
+        // 筛选功能
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderCivilizations(btn.dataset.filter);
+            });
+        });
+
+        // 初始化渲染
+        renderCivilizations();
+        renderComputerTable();
+    </script>
+</body>
+</html>
